@@ -7,7 +7,9 @@ const utils = require('./../utils');
 const fetch = require('node-fetch');
 
 const Video = require('./../models/video');
+
 const key = 'AIzaSyDf0dAPd8_dcfj7Ucla3eFPZZ0ytf5t7nc';
+let count = 0;
 
 module.exports = {
   // get a video from youtube
@@ -20,8 +22,20 @@ module.exports = {
           console.log('meta ', data.items[0].snippet);
         });
       // download the video
-      this.downloadVideo(vidId);
+      this.downloadVideo(vidId)
+        .then(() => {
+          resolve();
+        });
     });
+  },
+  count() {
+    count ++;
+    if (count >= 2){
+      this.weAreDone();
+    }
+  },
+  weAreDone() {
+
   },
   //
   getMetadata(vidId) {
@@ -32,22 +46,24 @@ module.exports = {
   },
   //
   downloadVideo(vidId) {
-    const youtubeUrl = `http://www.youtube.com/watch?v=${vidId}`;
-    const videoFile = utils.randomFileName() + '.mp4';
-    const audioFile = utils.randomFileName() + '.mp3';
-    const videoPath = path.join(config.files, videoFile);
-    const audioPath = path.join(config.files, audioFile);
+    return new Promise((resolve, reject) => {
+      const youtubeUrl = `http://www.youtube.com/watch?v=${vidId}`;
+      const videoFile = `${utils.randomFileName()}+ .mp4`;
+      // const audioFile = utils.randomFileName() + '.mp3';
+      const videoPath = path.join(config.files, videoFile);
+      // const audioPath = path.join(config.files, audioFile);
+      // start downloading a video
+      const videoStream = ytdl(youtubeUrl, {
+        format(f){
+          return f.container === 'mp4';
+        },
+      }).pipe(fs.createWriteStream(videoPath));
 
-    // start downloading a video
-    const videoStream = ytdl(youtubeUrl, {
-      format(f){
-        return f.container === 'mp4';
-      },
-    }).pipe(fs.createWriteStream(videoPath));
-
-    // when video is finished loading
-    videoStream.on('finish', () => {
-      console.log('vid is finished');
+      // when video is finished loading
+      videoStream.on('finish', () => {
+        // console.log('vid is finished');
+        resolve();
+      });
     });
   },
 };
