@@ -59,8 +59,9 @@ router.route('/api/videos')
     // download video
     downloader.getVideo(req.body.videoId)
       .then((res) => {
-        console.log('got all the result back', res);
-      });
+        // debugger;
+        // console.log('got all the result back', res);
+      }); 
   })
   // get all vids
   .get((req, res) => {

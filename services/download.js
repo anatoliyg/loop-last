@@ -9,33 +9,36 @@ const fetch = require('node-fetch');
 const Video = require('./../models/video');
 
 const key = 'AIzaSyDf0dAPd8_dcfj7Ucla3eFPZZ0ytf5t7nc';
-let count = 0;
 
 module.exports = {
   // get a video from youtube
   getVideo(vidId) {
+    // let emptyVideo = {};
+
     return new Promise((resolve, reject) => {
+       Video.findOne({ 'youtubeId' : vidId })
+        .then((vid) => {
+          
+        })
+
       // get meta data 
       this.getMetadata(vidId)
         .then(data => data.json())
         .then((data) => {
-          console.log('meta ', data.items[0].snippet);
+          // console.log('meta ', data.items[0].snippet);
         });
       // download the video
       this.downloadVideo(vidId)
-        .then(() => {
-          resolve();
-        });
-    });
-  },
-  count() {
-    count ++;
-    if (count >= 2){
-      this.weAreDone();
-    }
-  },
-  weAreDone() {
+        .then();
 
+      // let counter = 0;
+      // const count = () => {
+      //   counter ++;
+      //   if (counter >= 2) {
+
+      //   }
+      // }
+    });
   },
   //
   getMetadata(vidId) {
@@ -52,6 +55,7 @@ module.exports = {
       // const audioFile = utils.randomFileName() + '.mp3';
       const videoPath = path.join(config.files, videoFile);
       // const audioPath = path.join(config.files, audioFile);
+
       // start downloading a video
       const videoStream = ytdl(youtubeUrl, {
         format(f){

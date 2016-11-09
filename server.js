@@ -15,6 +15,9 @@ const routes = require('./routes/index');
 
 // setup express app
 const app = express();
+process.on('uncaughtException', (err) => {
+  console.log(err);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
